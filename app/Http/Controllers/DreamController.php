@@ -46,7 +46,7 @@ class DreamController extends Controller
             'content' => 'required|max:255|string'
         ]);
 
-        $dream = DB::table('dreams')->insertGetId([
+        $dream = DB::table('dreams')->insert([
             ...$validated,
             'user_id' => auth()->user()->id,
             'created_at' => now(),
@@ -68,6 +68,11 @@ class DreamController extends Controller
     public function show(string $id)
     {
         //
+
+        return view('admin.dreams.show', [
+            'dream' => DB::table('dreams')->where('id', $id)->first(),
+        ]);
+
     }
 
     /**
@@ -76,6 +81,17 @@ class DreamController extends Controller
     public function edit(string $id)
     {
         //
+        $dream = DB::table('dreams')
+        ->where('id', $id)
+        ->where('user_id', auth()->user()->id)
+        ->first();
+
+
+        if(!$dream){
+            return to_route('dreams.index');
+        }
+
+        return view('admin.dreams.edit', compact('dream'));
     }
 
     /**
@@ -84,6 +100,21 @@ class DreamController extends Controller
     public function update(Request $request, string $id)
     {
         //
+
+        $validated = $request->validate([
+            'content' => 'required|max:255|string'
+        ]);
+
+        $dream = DB::table('dreams')
+            ->where('id', '$id')
+            ->where('user_id',auth()->user()->id)
+            ->update([
+                ...$validated,
+                'updated_at' => now(),
+            ]);
+
+        return to_route('dreams.show', $dream);
+
     }
 
     /**
@@ -91,6 +122,15 @@ class DreamController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $dream = DB::table('dreams')
+            ->where([
+                'id' => $id,
+                'user_id' => auth()->user()->id
+            ])->delete();
+
+        return back();
     }
 }
+
+
+

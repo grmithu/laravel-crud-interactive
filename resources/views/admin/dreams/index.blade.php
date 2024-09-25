@@ -51,7 +51,15 @@
 
                                 <td class="space-x-2 px-6 py-4 text-right">
                                     <a href="{{ route('dreams.edit', $dream->id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                                    <a href="{{ route('dreams.destroy', $dream->id) }}" class="font-medium text-red-600 dark:text-blue-500 hover:underline">Delete</a>
+
+                                    <form action="{{ route('dreams.destroy', $dream->id )}}" method="POST"  onclick="return confirm('Are you sure?');">
+                                        @csrf
+                                        @method('Delete')
+
+                                        <input type="submit" class="font-medium text-red-600 dark:text-blue-500 hover:underline" value="Delete">
+
+                                    </form>
+
                                 </td>
 
 
